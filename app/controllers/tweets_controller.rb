@@ -15,11 +15,12 @@ class TweetsController < ApplicationController
   def create
     token = cookies.permanent.signed[:twitter_session_token]
     session = Session.find_by(token: token)
-    user = User.find_by(id: session.user_id)
-  
-    @tweet = user.tweets.create(tweet_params)
-    if @tweet.save
-      render 'tweets/success_true'
+
+    if session
+      user = User.find_by(id: session.user_id)
+      @tweet = user.tweets.create(tweet_params)
+
+      render 'tweets/success_true' if @tweet.save
     else
       render 'common/success_false'
     end
